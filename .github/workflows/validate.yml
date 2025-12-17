@@ -1,20 +1,27 @@
-name: Name Capital Validation
+name: Validate Names (Uppercase Only)
 
 on:
-  workflow_dispatch:
-    inputs:
-      name:
-        description: "Enter your name in ALL CAPS"
-        required: true
+  pull_request:
+    paths:
+      - "site/names.txt"
+      - "scripts/check_caps.sh"
 
 jobs:
-  validate-name:
-    runs-on: ubuntu-latest # GitHub-hosted runner
+  validate:
+    name: Run uppercase validation
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout repo
+      - name: Checkout PR code
         uses: actions/checkout@v4
 
-      - name: Run CAPS validation
+      - name: Show runner info (demo purpose)
         run: |
-          ./check_caps.sh "${{ github.event.inputs.name }}"
+          echo "Runner OS: $RUNNER_OS"
+          echo "Runner name: $RUNNER_NAME"
+
+      - name: Make validation script executable
+        run: chmod +x scripts/check_caps.sh
+
+      - name: Validate names
+        run: ./scripts/check_caps.sh
